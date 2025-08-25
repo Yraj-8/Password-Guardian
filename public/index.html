@@ -1,604 +1,1034 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Password Breach Checker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-      min-height: 100vh;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .container {
-      max-width: 500px;
-      width: 100%;
-    }
-
-    /* Navigation */
-    .nav-tabs {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 30px;
-      background: rgba(59,130,246,0.1);
-      border-radius: 12px;
-      padding: 4px;
-    }
-
-    .nav-tab {
-      flex: 1;
-      padding: 10px 16px;
-      background: transparent;
-      color: #93c5fd;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .nav-tab.active {
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      color: white;
-      box-shadow: 0 2px 8px rgba(59,130,246,0.3);
-    }
-
-    .nav-tab:hover:not(.active) {
-      background: rgba(59,130,246,0.2);
-      color: white;
-    }
-
-    /* Pages */
-    .page {
-      display: none;
-      animation: fadeIn 0.6s ease;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    /* Home Page */
-    .intro-page {
-      text-align: center;
-    }
-
-    .hero-icon {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      border-radius: 20px;
-      margin: 0 auto 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 30px rgba(59,130,246,0.3);
-    }
-
-    .hero-icon svg {
-      width: 40px;
-      height: 40px;
-      fill: white;
-    }
-
-    .intro-title {
-      font-size: 2.5rem;
-      font-weight: 800;
-      margin-bottom: 15px;
-    }
-
-    .intro-subtitle {
-      font-size: 1.1rem;
-      color: #ccc;
-      margin-bottom: 40px;
-    }
-
-    .stats {
-      display: flex;
-      gap: 30px;
-      justify-content: center;
-      margin-bottom: 40px;
-    }
-
-    .stat {
-      text-align: center;
-    }
-
-    .stat-number {
-      font-size: 2rem;
-      font-weight: 900;
-      font-family: monospace;
-    }
-
-    .stat-label {
-      font-size: 0.9rem;
-      color: #999;
-      margin-top: 5px;
-    }
-
-    .cta-button {
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(59,130,246,0.3);
-    }
-
-    .cta-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(59,130,246,0.4);
-      background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-    }
-
-    /* Checker Page */
-    .card {
-      background: rgba(255,255,255,0.95);
-      color: #000;
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .shield-icon {
-      width: 50px;
-      height: 50px;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border-radius: 12px;
-      margin: 0 auto 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(30,41,59,0.3);
-    }
-
-    .shield-icon svg {
-      width: 24px;
-      height: 24px;
-      fill: white;
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      color: #666;
-      font-size: 0.9rem;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-    }
-
-    input {
-      width: 100%;
-      padding: 15px;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      font-size: 1rem;
-      margin-bottom: 20px;
-      outline: none;
-      transition: all 0.3s ease;
-    }
-
-    input:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-    }
-
-    button {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(30,41,59,0.3);
-    }
-
-    button:hover:not(:disabled) {
-      background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(30,41,59,0.4);
-    }
-
-    button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .result {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 10px;
-      font-weight: 500;
-      display: none;
-    }
-
-    .result.ok {
-      background: #f0f0f0;
-      border: 2px solid #ccc;
-      color: #000;
-    }
-
-    .result.bad {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border: 2px solid #475569;
-      color: white;
-    }
-
-    /* How to Use Page */
-    .how-to-use {
-      color: white;
-    }
-
-    .how-to-use h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .steps {
-      display: grid;
-      gap: 25px;
-    }
-
-    .step {
-      background: rgba(59,130,246,0.1);
-      padding: 20px;
-      border-radius: 15px;
-      border: 1px solid rgba(59,130,246,0.2);
-    }
-
-    .step-number {
-      width: 30px;
-      height: 30px;
-      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.9rem;
-      margin-bottom: 15px;
-    }
-
-    .step h3 {
-      font-size: 1.1rem;
-      margin-bottom: 10px;
-      color: #93c5fd;
-    }
-
-    .step p {
-      color: #cbd5e1;
-      line-height: 1.5;
-    }
-
-    /* Security Tips Page */
-    .tips-page {
-      color: white;
-    }
-
-    .tips-page h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .tip-card {
-      background: rgba(59,130,246,0.1);
-      padding: 20px;
-      border-radius: 15px;
-      border: 1px solid rgba(59,130,246,0.2);
-      margin-bottom: 20px;
-    }
-
-    .tip-icon {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-    }
-
-    .tip-card h3 {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: #93c5fd;
-    }
-
-    .tip-card p {
-      color: #cbd5e1;
-      line-height: 1.5;
-    }
-
-    /* About Page */
-    .about-page {
-      color: white;
-      text-align: center;
-    }
-
-    .about-page h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 30px;
-    }
-
-    .about-content {
-      background: rgba(59,130,246,0.1);
-      padding: 30px;
-      border-radius: 20px;
-      border: 1px solid rgba(59,130,246,0.2);
-      text-align: left;
-    }
-
-    .about-content h3 {
-      color: #93c5fd;
-      margin-bottom: 15px;
-    }
-
-    .about-content p {
-      color: #cbd5e1;
-      line-height: 1.6;
-      margin-bottom: 20px;
-    }
-
-    .feature-list {
-      list-style: none;
-      padding: 0;
-    }
-
-    .feature-list li {
-      padding: 8px 0;
-      color: #cbd5e1;
-    }
-
-    .feature-list li:before {
-      content: "✓";
-      color: #3b82f6;
-      font-weight: bold;
-      margin-right: 10px;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 640px) {
-      .intro-title { font-size: 2rem; }
-      .stats { flex-direction: column; gap: 20px; }
-      .card { padding: 30px 20px; }
-      .nav-tabs { flex-wrap: wrap; }
-      .nav-tab { font-size: 0.8rem; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Guardian - Secure Your Digital Identity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #4a6cf7;
+            --primary-dark: #3b5be3;
+            --secondary: #6c757d;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 8px;
+            --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-top: 70px;
+        }
+        
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 0 20px;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 25px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+            background: var(--light);
+        }
+        
+        .nav-links a.active {
+            color: var(--primary);
+            background: rgba(74, 108, 247, 0.1);
+        }
+        
+        /* Sections */
+        .section {
+            display: none;
+            padding: 40px 0;
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 40px;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-title i {
+            margin-right: 10px;
+        }
+        
+        /* About Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .feature {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .feature i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature h3 {
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        /* Rules Section */
+        .rules {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .rules ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .rules li {
+            margin-bottom: 10px;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
+        }
+        
+        .error {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(74, 108, 247, 0.1);
+        }
+        
+        .btn-logout {
+            background: var(--danger);
+        }
+        
+        .btn-logout:hover {
+            background: #c82333;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--gray);
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+        }
+        
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Password Checker */
+        .checker {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .safe {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+        }
+        
+        .breached {
+            background: rgba(220, 53, 69, 0.2);
+            color: var(--danger);
+        }
+        
+        /* Profile */
+        .profile-info {
+            margin-bottom: 30px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: var(--gray);
+        }
+        
+        .info-value {
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-section h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .footer-section p, .footer-section li {
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 15px;
+            }
+            
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: white;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 10px 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+                font-size: 24px;
+                cursor: pointer;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+        }
+        
+        /* Utilities */
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-20 {
+            margin-top: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
     <!-- Navigation -->
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="showPage('home')">Home</button>
-      <button class="nav-tab" onclick="showPage('checker')">Checker</button>
-      <button class="nav-tab" onclick="showPage('howto')">How to Use</button>
-      <button class="nav-tab" onclick="showPage('tips')">Tips</button>
-      <button class="nav-tab" onclick="showPage('about')">About</button>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Password Guardian</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active" data-section="intro">Home</a></li>
+                <li><a href="#" class="nav-link" data-section="auth">Login</a></li>
+                <li><a href="#" class="nav-link" data-section="auth">Signup</a></li>
+                <li><a href="#" class="nav-link" data-section="profile" id="profile-link">Profile</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Intro Section -->
+        <section id="intro" class="section active">
+            <div class="hero">
+                <h1>Protect Your Digital Identity</h1>
+                <p>Password Guardian helps you secure your accounts with advanced breach detection and secure profile management.</p>
+                <button class="btn" onclick="showSection('auth')">Get Started</button>
+            </div>
+
+            <div class="features">
+                <div class="feature card">
+                    <i class="fas fa-lock"></i>
+                    <h3>Password Breach Detection</h3>
+                    <p>Check if your passwords have been compromised in data breaches with our advanced scanning technology.</p>
+                </div>
+                <div class="feature card">
+                    <i class="fas fa-user-shield"></i>
+                    <h3>Secure Profile Management</h3>
+                    <p>Keep your personal information safe with our encrypted profile system and secure authentication.</p>
+                </div>
+              <div class="feature card">
+  <i class="fas fa-bell"></i>
+  <h3>Instant Alerts</h3>
+  <p>Receive immediate notifications if your credentials appear in new data breaches.</p>
+  <span class="coming-soon-pill">⏳ Coming Soon...</span>
+</div>
+
+<style>
+  .coming-soon-pill {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #f5f5f5;
+    background: #070707;
+    border-radius: 20px;
+    border: 1px solid hsl(0, 0%, 100%);
+    letter-spacing: 0.5px;
+  }
+</style>
+
+            </div>
+
+            <div class="rules card">
+                <h2 class="card-title"><i class="fas fa-info-circle"></i> Usage Guidelines</h2>
+                <ul>
+                    <li>Never share your passwords with anyone, including our support team.</li>
+                    <li>Use strong, unique passwords for each of your online accounts.</li>
+                    <li>Regularly check your passwords for potential breaches.</li>
+                    <li>Enable two-factor authentication wherever possible for added security.</li>
+                    <li>Update your passwords immediately if they are marked as breached.</li>
+                </ul>
+                <p>By using our service, you agree to our Terms of Service and Privacy Policy.</p>
+            </div>
+        </section>
+
+        <!-- Auth Section -->
+        <section id="auth" class="section">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-user-lock"></i> Account Authentication</h2>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="login">Login</div>
+                    <div class="tab" data-tab="signup">Sign Up</div>
+                </div>
+                
+                <!-- Login Form -->
+                <div class="tab-content active" id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" placeholder="Enter your email">
+                        <div class="error" id="login-email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password">
+                        <div class="error" id="login-password-error"></div>
+                    </div>
+                    
+                    <button class="btn" onclick="handleLogin()">
+                        <span class="spinner" id="login-spinner"></span>
+                        Login to Account
+                    </button>
+                </div>
+                
+                <!-- Signup Form -->
+                <div class="tab-content" id="signup-form">
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input type="text" id="signup-username" placeholder="Choose a username">
+                        <div class="error" id="signup-username-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <input type="email" id="signup-email" placeholder="Enter your email">
+                        <div class="error" id="signup-email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" placeholder="Create a password">
+                        <div class="error" id="signup-password-error"></div>
+                    </div>
+                    
+                    <button class="btn" onclick="handleSignup()">
+                        <span class="spinner" id="signup-spinner"></span>
+                        Create Account
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="section">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-user-circle"></i> User Profile</h2>
+                
+                <div class="profile-info">
+                    <div class="info-item">
+                        <span class="info-label">Username:</span>
+                        <span class="info-value" id="profile-username">-</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value" id="profile-email">-</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Account Status:</span>
+                        <span class="info-value" id="profile-status">-</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Member Since:</span>
+                        <span class="info-value" id="profile-joined">-</span>
+                    </div>
+                </div>
+                
+                <div class="checker">
+                    <h3><i class="fas fa-shield-alt"></i> Password Breach Checker</h3>
+                    <p>Check if your password has been compromised in data breaches</p>
+                    
+                    <div class="form-group">
+                        <input type="password" id="check-password" placeholder="Enter password to check">
+                        <div class="error" id="check-password-error"></div>
+                    </div>
+                    
+                    <button class="btn btn-outline" onclick="checkPassword()">
+                        <span class="spinner" id="check-spinner"></span>
+                        Check Password Security
+                    </button>
+                    
+                    <div class="result" id="check-result"></div>
+                </div>
+                
+                <button class="btn btn-logout mt-20" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Log Out
+                </button>
+            </div>
+        </section>
     </div>
 
-    <!-- Home Page -->
-    <div class="page active intro-page" id="homePage">
-      <div class="hero-icon">
-        <svg viewBox="0 0 24 24">
-          <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11.5C15.4,11.5 16,12.4 16,13V16C16,17.4 15.4,18 14.8,18H9.2C8.6,18 8,17.4 8,16V13C8,12.4 8.6,11.5 9.2,11.5V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,10V11.5H13.5V10C13.5,8.7 12.8,8.2 12,8.2Z"/>
-        </svg>
-      </div>
-      
-      <h1 class="intro-title">Password Security</h1>
-      <p class="intro-subtitle">Check if your password has been breached</p>
-
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-number">15B+</div>
-          <div class="stat-label">Passwords</div>
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Password Guardian</h3>
+                    <p>Protecting your digital identity with advanced security solutions and breach detection technology.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p><i class="fas fa-envelope"></i> support@passwordguardian.com</p>
+                    <p><i class="fas fa-phone"></i> +91 000 123-4567</p>
+                    <p><i class="fas fa-map-marker-alt"></i>  Security Ave, Patna-14
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="#">Home</a></p>
+                    <p><a href="#">Login</a></p>
+                    <p><a href="#">Sign Up</a></p>
+                    <p><a href="#">Privacy Policy</a></p>
+                    <p><a href="#">Terms of Service</a></p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Password Guardian. All rights reserved to Yraj.</p>
+            </div>
         </div>
-        <div class="stat">
-          <div class="stat-number">600K+</div>
-          <div class="stat-label">Breaches</div>
-        </div>
-      </div>
+    </footer>
 
-      <button class="cta-button" onclick="showPage('checker')">
-        Check Password
-      </button>
-    </div>
-
-    <!-- Checker Page -->
-    <div class="page" id="checkerPage">
-      <div class="card">
-        <div class="header">
-          <div class="shield-icon">
-            <svg viewBox="0 0 24 24">
-              <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11.5C15.4,11.5 16,12.4 16,13V16C16,17.4 15.4,18 14.8,18H9.2C8.6,18 8,17.4 8,16V13C8,12.4 8.6,11.5 9.2,11.5V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,10V11.5H13.5V10C13.5,8.7 12.8,8.2 12,8.2Z"/>
-            </svg>
-          </div>
-          <h1>Password Checker</h1>
-          <p class="subtitle">Enter your password below</p>
-        </div>
-
-        <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Type your password...">
-        <button id="checkBtn">Check</button>
-        <div id="result" class="result"></div>
-      </div>
-    </div>
-
-    <!-- How to Use Page -->
-    <div class="page how-to-use" id="howtoPage">
-      <h2>How to Use</h2>
-      <div class="steps">
-        <div class="step">
-          <div class="step-number">1</div>
-          <h3>Navigate to Checker</h3>
-          <p>Click on the "Checker" tab or use the "Check Password" button from the home page.</p>
-        </div>
-        <div class="step">
-          <div class="step-number">2</div>
-          <h3>Enter Your Password</h3>
-          <p>Type the password you want to check in the password field. Don't worry - it's processed securely.</p>
-        </div>
-        <div class="step">
-          <div class="step-number">3</div>
-          <h3>Check Results</h3>
-          <p>Click "Check" and wait for results. You'll see if your password has been found in any data breaches.</p>
-        </div>
-        <div class="step">
-          <div class="step-number">4</div>
-          <h3>Take Action</h3>
-          <p>If your password is compromised, change it immediately. If it's safe, you can continue using it.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Security Tips Page -->
-    <div class="page tips-page" id="tipsPage">
-      <h2>Security Tips</h2>
-      <div class="tip-card">
-        <div class="tip-icon">🔐</div>
-        <h3>Use Strong Passwords</h3>
-        <p>Create passwords with at least 12 characters, including uppercase, lowercase, numbers, and symbols.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">🔄</div>
-        <h3>Use Unique Passwords</h3>
-        <p>Never reuse passwords across multiple accounts. Each account should have its own unique password.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">🛡️</div>
-        <h3>Enable 2FA</h3>
-        <p>Turn on two-factor authentication wherever possible for an extra layer of security.</p>
-      </div>
-      <div class="tip-card">
-        <div class="tip-icon">📱</div>
-        <h3>Use Password Manager</h3>
-        <p>Consider using a reputable password manager to generate and store strong, unique passwords.</p>
-      </div>
-    </div>
-
-    <!-- About Page -->
-    <div class="page about-page" id="aboutPage">
-      <h2>About</h2>
-      <div class="about-content">
-        <h3>What is Password Breach Checker?</h3>
-        <p>Our Password Breach Checker is a security tool that helps you determine if your passwords have been compromised in known data breaches. We compare your passwords against a database of billions of breached credentials.</p>
+    <script>
+        // API Base URL - Update this to match your backend URL
+const API_BASE_URL = 'http://localhost:5000'; // Backend port 5000
         
-        <h3>How It Works</h3>
-        <p>When you enter a password, we securely check it against our database of known breached passwords. Your password is never stored or logged - we only tell you if it's been found in breaches.</p>
+        // DOM Elements
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const profileLink = document.getElementById('profile-link');
         
-        <h3>Features</h3>
-        <ul class="feature-list">
-          <li>Real-time password breach checking</li>
-          <li>Secure processing - passwords are not stored</li>
-          <li>Database of 15+ billion breached passwords</li>
-          <li>Instant results with detailed breach counts</li>
-          <li>Clean, user-friendly interface</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    function showPage(pageId) {
-      // Hide all pages
-      document.querySelectorAll('.page').forEach(page => {
-        page.classList.remove('active');
-      });
-      
-      // Remove active class from all tabs
-      document.querySelectorAll('.nav-tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      
-      // Show selected page
-      document.getElementById(pageId + 'Page').classList.add('active');
-      
-      // Add active class to clicked tab
-      event.target.classList.add('active');
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      const btn = document.getElementById("checkBtn");
-      const input = document.getElementById("password");
-      const result = document.getElementById("result");
-
-      btn.addEventListener("click", async () => {
-        const password = input.value.trim();
-        if (!password) {
-          result.style.display = "block";
-          result.textContent = "❌ Please enter a password.";
-          result.className = "result bad";
-          return;
+        // Show specific section
+        function showSection(sectionId) {
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update nav links
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.section === sectionId) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
         }
-
-        btn.disabled = true;
-        btn.textContent = "Checking...";
-
-        try {
-          const res = await fetch("/check", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ password })
-          });
-
-          const data = await res.json();
-          result.style.display = "block";
-
-          if (data.breached) {
-            result.innerHTML = `⚠️ This password has appeared in breaches <strong>${data.count.toLocaleString()}</strong> times. Do NOT use it.`;
-            result.className = "result bad";
-          } else {
-            result.textContent = "✅ Good news! This password was not found in known breaches.";
-            result.className = "result ok";
-          }
-        } catch (err) {
-          result.style.display = "block";
-          result.textContent = "❌ Error checking password. Try again.";
-          result.className = "result bad";
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Check";
+        
+        // Switch tabs in auth section
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+                
+                // Update active tab
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Show active tab content
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(`${tabId}-form`).classList.add('active');
+            });
+        });
+        
+        // Navigation link clicks
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = link.dataset.section;
+                
+                // Check if user is trying to access profile without login
+                if (sectionId === 'profile' && !localStorage.getItem('token')) {
+                    showSection('auth');
+                    alert('Please login to access your profile');
+                    return;
+                }
+                
+                showSection(sectionId);
+            });
+        });
+        
+        // Form validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
         }
-      });
-    });
-  </script>
+        
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        function hideErrors() {
+            document.querySelectorAll('.error').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+        
+        // API Calls
+        async function handleLogin() {
+            hideErrors();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Validation
+            if (!email) {
+                showError('login-email-error', 'Email is required');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('login-email-error', 'Please enter a valid email');
+                return;
+            }
+            
+            if (!password) {
+                showError('login-password-error', 'Password is required');
+                return;
+            }
+            
+            // Show loading spinner
+            document.getElementById('login-spinner').style.display = 'inline-block';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading spinner
+                document.getElementById('login-spinner').style.display = 'none';
+                
+                if (response.ok) {
+                    // Save token and show profile
+                    localStorage.setItem('token', data.token);
+                    await loadProfile();
+                    showSection('profile');
+                } else {
+                    showError('login-password-error', data.message || 'Login failed');
+                }
+            } catch (error) {
+                document.getElementById('login-spinner').style.display = 'none';
+                showError('login-password-error', 'Network error. Please try again.');
+            }
+        }
+        
+        async function handleSignup() {
+            hideErrors();
+            
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            // Validation
+            if (!username) {
+                showError('signup-username-error', 'Username is required');
+                return;
+            }
+            
+            if (!email) {
+                showError('signup-email-error', 'Email is required');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('signup-email-error', 'Please enter a valid email');
+                return;
+            }
+            
+            if (!password) {
+                showError('signup-password-error', 'Password is required');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('signup-password-error', 'Password must be at least 6 characters');
+                return;
+            }
+            
+            // Show loading spinner
+            document.getElementById('signup-spinner').style.display = 'inline-block';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading spinner
+                document.getElementById('signup-spinner').style.display = 'none';
+                
+                if (response.ok) {
+                    // Save token and show profile
+                    localStorage.setItem('token', data.token);
+                    await loadProfile();
+                    showSection('profile');
+                } else {
+                    showError('signup-email-error', data.message || 'Registration failed');
+                }
+            } catch (error) {
+                document.getElementById('signup-spinner').style.display = 'none';
+                showError('signup-email-error', 'Network error. Please try again.');
+            }
+        }
+        
+        async function checkPassword() {
+            hideErrors();
+            
+            const password = document.getElementById('check-password').value;
+            const resultElement = document.getElementById('check-result');
+            
+            if (!password) {
+                showError('check-password-error', 'Please enter a password to check');
+                return;
+            }
+            
+            // Show loading spinner
+            document.getElementById('check-spinner').style.display = 'inline-block';
+            resultElement.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/check`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password })
+                });
+                
+                const data = await response.json();
+                
+                // Hide loading spinner
+                document.getElementById('check-spinner').style.display = 'none';
+                
+                if (response.ok) {
+                    resultElement.textContent = data.breached ? 
+                        `This password has been breached ${data.times || 'multiple'} times. Do not use it!` : 
+                        'This password is safe and has not been breached.';
+                    
+                    resultElement.className = data.breached ? 'result breached' : 'result safe';
+                    resultElement.style.display = 'block';
+                } else {
+                    resultElement.textContent = data.message || 'Error checking password';
+                    resultElement.className = 'result breached';
+                    resultElement.style.display = 'block';
+                }
+            } catch (error) {
+                document.getElementById('check-spinner').style.display = 'none';
+                resultElement.textContent = 'Network error. Please try again.';
+                resultElement.className = 'result breached';
+                resultElement.style.display = 'block';
+            }
+        }
+        
+        async function loadProfile() {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/user/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    
+                    // Update profile page
+                    document.getElementById('profile-username').textContent = user.username || 'N/A';
+                    document.getElementById('profile-email').textContent = user.email || 'N/A';
+                    document.getElementById('profile-status').textContent = 'Verified';
+                    document.getElementById('profile-joined').textContent = new Date().toLocaleDateString();
+                } else {
+                    // Token might be invalid, logout user
+                    handleLogout();
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+        
+        function handleLogout() {
+            localStorage.removeItem('token');
+            showSection('intro');
+        }
+        
+        // Check if user is logged in on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('token')) {
+                loadProfile();
+                // Show profile section if user is logged in
+                showSection('profile');
+            }
+            
+            // Mobile menu toggle
+            document.querySelector('.menu-toggle').addEventListener('click', () => {
+                document.querySelector('.nav-links').classList.toggle('active');
+            });
+        });
+    </script>
 </body>
-</html>
+</html> 
