@@ -64,6 +64,9 @@ app.post("/check", async (req, res) => {
 app.use("/auth", authRoutes);
 const profileRoutes = require("./routes/profile");
 app.use("/user", profileRoutes);
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "public", "index.html"));
+});
 
 
 
