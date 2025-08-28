@@ -1,4 +1,3 @@
-
 const mongoose=require("mongoose")
 const bcrypt=require("bcryptjs")
  const userSchema=new mongoose.Schema({
@@ -30,4 +29,3 @@ const bcrypt=require("bcryptjs")
   return bcrypt.compare(candidatePassword, this.password);
 };
 module.exports = mongoose.model("User", userSchema);
-
